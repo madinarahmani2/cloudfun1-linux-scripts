@@ -1,10 +1,7 @@
-## user data scripts for the app to work with the posts. 
-## this is for the user data when you have a fresh new vm for app
-
+## This is for the user data when you have a fresh new vm for app
 
 
 #!/bin/bash
-# User Data script for server initialization
 
 # Update and upgrade system packages
 sudo apt update -y

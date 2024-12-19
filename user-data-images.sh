@@ -1,4 +1,4 @@
-## user data scripts for everything to work with our custom images we made
+## user data scripts for everything to work with our custom images
 ## when making a app virtual machine this is the user data youll need 
 #!/bin/bash
 
@@ -14,6 +14,6 @@ pm2 start app.js
 
 
 
-## when creating vm for database image 
-## on userdata add 
+## when creating the vm for database image 
+## on userdata section add 
 sudo systemctl enable mongo

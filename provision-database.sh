@@ -1,19 +1,7 @@
+# What This Script Does 
+## This Bash script automates the installation, configuration, and setup of MongoDB (version 7.0.6) on an Ubuntu-based virtual machine. Below is a step-by-step explanation of each section and what you can expect when the script runs.
+
 #!/bin/bash
-
-
-# sparta database vm 
-
-## ubuntu 22.04
-## vm network under my name
-## ssh public key 
-## private subnet 
-## create new 
-## add an inbound rule 80 and 3000
-## add tags and review
-
-
-
-# COMMANDS 
 
 # update vm packages
 sudo apt update -y
@@ -75,3 +63,10 @@ echo done!
 
 #check the status 
 sudo systemctl status mongod
+
+
+#### Final State
+## MongoDB 7.0.6 is installed and running.
+## The server is configured to accept connections from external IPs.
+## MongoDB will automatically start on system boot.
+## This script ensures a reliable MongoDB installation and configuration process, making the database ready for use in a production or development environment.
