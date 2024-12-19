@@ -56,7 +56,8 @@ sudo sed -i.bak 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf
 ####   IF ERROR SHOWS 
 # checking the file to see bind
 sudo nano /etc/mongod.conf
-## change the bind to 0.0.0.0
+## change the bind to 
+0.0.0.0
 ## save it 
 # check if the bindIp has changed 
 cat /etc/mongod.conf | grep bindIp
