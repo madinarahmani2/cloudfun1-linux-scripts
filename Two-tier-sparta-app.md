@@ -1,3 +1,7 @@
+This guide walks you through the process of manually deploying a website on an Azure virtual machine (VM) with Nginx as the web server and MongoDB as the database. 
+To facilitate external access, the deployment uses an SSH public-private key pair connection and a Virtual Network's (VNet) public address.
+
+
 1.  Creating the Sparta App VM and Database VM 
 
      - /Users/dinar/Desktop/github/cloudfun1-linux-cloud/learn_azure_basics/scripts/setting.up.vm.md
@@ -319,15 +323,33 @@ A custom image is a reusable VM image derived from an existing VM. It consists o
 
      - we need to create a new app Vm exactly how we did with the user data, however as an image instead of UBUNTU 220.04 we use "ramon-ubuntu"
      - once the VM is created we then capture that VM and create an image. // this duplicates the pre configured enviroment. 
+Click on the Capture button.
+In the image creation panel:
+Deselect the option to share the image to the Azure gallery (for private use).
+Provide a meaningful name for the image (e.g., App-VM-Image, DB-VM-Image).
+Confirm and create the image.
      - name the image "cloudfun-madina-app-image"
      - then we have to test that image we created to ensure that we have acptured it correctlt
      - create a new VM using "cloudfun-madina-app-image" and on the user data paste this script 
           -learn_azure_basics/scripts/user-data-images.sh
+To dynamically configure the App VM, add the following user data script upon deployment:
+
+```bash
+#!/bin/bash
+
+export DB_HOST=mongodb://10.0.3.4:27017/posts
+
+cd /repo/app
+npm install
+pm2 stop all
+pm2 start app.js
+```
+
     - Copy the Public IP Address of the new VM.Test the app by accessing:
     App URL: http://<Public-IP>:3000
     Database URL: http://<Public-IP>:3000/posts
 
-8. Database VM using images
+1. Database VM using images
 
     - Create a database image like we did for the app.
     - create a database VM as done previously. once it has been completed. capture this and save it as "cloudfun1-madina-database-image"
@@ -336,3 +358,38 @@ A custom image is a reusable VM image derived from an existing VM. It consists o
    - Copy the Public IP Address of the new VM by accessing:
     App URL: http://<Public-IP>:3000
     Database URL: http://<Public-IP>:3000/posts
+
+This is for the user data when you have a fresh new VM for MongoDB
+```bash
+#!/bin/bash
+
+# Update and upgrade system packages
+sudo apt update -y
+sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y
+
+# Import MongoDB public GPG key
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+    sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+    --dearmor
+
+# Create MongoDB list file
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+# Update MongoDB package list
+sudo apt-get update
+
+# Install specific version of MongoDB
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mongodb-org=7.0.6 mongodb-org-database=7.0.6 mongodb-org-server=7.0.6 mongodb-mongosh mongodb-org-mongos=7.0.6 mongodb-org-tools=7.0.6
+
+# Configure MongoDB to listen on all IPs
+sudo sed -i.bak 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf
+
+# Restart MongoDB to apply new configuration
+sudo systemctl restart mongod
+
+# Remove MongoDB socket file if permission issues arise
+sudo rm -rf /tmp/mongodb-27017.sock
+
+# Enable MongoDB to start on boot
+sudo systemctl enable mongod
+```
