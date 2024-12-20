@@ -16,4 +16,4 @@ pm2 start app.js
 
 ## when creating the vm for database image 
 ## on userdata section add 
-sudo systemctl enable mongo
+
